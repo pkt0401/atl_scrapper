@@ -1,0 +1,413 @@
+[
+  {
+    "post_id": "1",
+    "status": "답변 대기",
+    "title": "문의하기 작성 가이드",
+    "question_author": "김재혁",
+    "question_date": "2025. 12. 14. 오후 08:51",
+    "question_text": "안녕하세요.\nAI Talent Lab 운영 담당자입니다.\nAI Literacy, AI Bootcamp, AI Master Project 를 진행하는 과정에서\n문의주시는 내용들을 자산화하고 함께 공유하기 위해\n\"문의하기\"\n페이지를 신규 개설하였습니다.\n이에 빠른 답변 및 조치를 받으실 수 있도록 간단한 작성 가이드를 안내드리니\n참고하시어 학습 중 필요하실 때 언제든 이 페이지를 통해 문의해주시면 답변 및 조치해드리도록 하겠습니다.\n---------------------------------------------------------------------------------------------------------\n🖊️ 이렇게 작성해 주세요!\n1. [제목]은 현재 진행하고 계신 과정 기준으로 작성해주세요.\n예 1) AI Literacy 실습하기 문의\n예 2) Bootcamp 최종과제 개발 문의\n예 3) Bootcamp 강의 문의\n2. [내용]에는 조치가 필요한 사항이나 궁금하신 점을 작성해주세요.\n예 1) 과제 개발 중 다음과 같은 에러가 나는데 어떻게 조치해야할까요?\nFile ~\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\openai\\lib\\azure.py:199, in AzureOpenAI.__init__(self, api_version, azure_endpoint, azure_deployment, api_key, azure_ad_token, azure_ad_token_provider, organization, project, webhook_secret, websocket_base_url, base_url, timeout, max_retries, default_headers, default_query, http_client, _strict_response_validation)\n    196     azure_ad_token = os.environ.get(\"AZURE_OPENAI_AD_TOKEN\")\n    198 if api_key is None and azure_ad_token is None and azure_ad_token_provider is None:\n--> 199     raise OpenAIError(\n    200         \"Missing credentials. Please pass one of `api_key`, `azure_ad_token`, `azure_ad_token_provider`, or the `AZURE_OPENAI_API_KEY` or `AZURE_OPENAI_AD_TOKEN` environment variables.\"\n    201     )\n    203 if api_version is None:\n    204     api_version = os.environ.get(\"OPENAI_API_VERSION\")\n\nOpenAIError: Missing credentials. Please pass one of `api_key`, `azure_ad_token`, `azure_ad_token_provider`, or the `AZURE_OPENAI_API_KEY` or `AZURE_OPENAI_AD_TOKEN` environment variables.\n* 코드 관련 문의나 에러 관련 문의를 주실 때는 꼭 코드나 에러메시지를 함께 작성해주세요!\n3. [파일 첨부] 를 통해 문제 상황에 대한 스크린샷을 첨부해주시면 빠른 조치에 큰 도움이 됩니다.\n---------------------------------------------------------------------------------------------------------\n서비스는 지속 업데이트될 예정이며 사용 중 어려움이 있으시거나 건의/개선 요청 사항도\n편히 이 곳에 남겨주시면 서비스 개선에 적극 반영하도록 하겠습니다.\n감사합니다.",
+    "answer_count": 0,
+    "answers": [],
+    "images": [],
+    "image_filenames": ""
+  },
+  {
+    "post_id": "2",
+    "status": "답변 중",
+    "title": "AI Bootcamp 수료 문의",
+    "question_author": "axax123",
+    "question_date": "2026. 02. 24. 오후 05:33",
+    "question_text": "작년에 AI Literacy를 취득하지 않은 상태로 AI Bootcamp을 수강하다가 최종 과제를 제출하지 못했습니다.\n1. 26년도부터는 AI Literacy를 취득한 후에 AI Bootcamp 수강이 가능한 것으로 알고 있는데 맞을까요?\n2. 이전 수강 기록이 남아있는데 최종 과제 미제출 상태로 확인되어서 초기화 가능한지 문의 드립니다.",
+    "answer_count": 1,
+    "answers": [
+      {
+        "author": "관리자",
+        "date": "2026. 02. 24. 오후 06:35",
+        "text": "안녕하세요. 문의사항 답변 드립니다.\n1. '26년도 기존 '25년과 마찬가지로 AI Literacy 취득 없이도 AI Bootcamp 수강 가능합니다.\n2. 이후 새로운 기수 참여 시 최종 과제 제출을 해주시면 되고, 별도로 조치하실 필요는 없습니다.",
+        "is_admin": true
+      }
+    ],
+    "images": [],
+    "image_filenames": ""
+  },
+  {
+    "post_id": "3",
+    "status": "답변 중",
+    "title": "AI Literacy 인증정보가 AX College 자격증 내 인증정보에 반영되지 않았습니다.",
+    "question_author": "스칵스",
+    "question_date": "2026. 02. 24. 오후 05:30",
+    "question_text": "AI Literacy 인증정보가 AX College 자격증 내 인증정보에 반영되지 않았습니다.",
+    "answer_count": 1,
+    "answers": [
+      {
+        "author": "관리자",
+        "date": "2026. 02. 24. 오후 06:29",
+        "text": "안녕하세요, 확인 결과 정상적으로 College 시스템 반영 되어 있습니다.\nCollege [My Page]-[자격증]에 [AI Literacy 인증 정보]라고 따로 메뉴가 있는데\n혹시 다른 메뉴로 들어가신 게 아닌지 확인 해주시면 감사하겠습니다.",
+        "is_admin": true
+      }
+    ],
+    "images": [],
+    "image_filenames": ""
+  },
+  {
+    "post_id": "4",
+    "status": "답변 중",
+    "title": "AI Literacy 인증 문의",
+    "question_author": "axax123",
+    "question_date": "2026. 02. 24. 오후 05:28",
+    "question_text": "AX  college에서 AI Literacy 인증 시험을 위해 과정 수강 신청했습니다.\n3월 18일 오전 10시에 온라인으로 시험을 보는 것으로 확인되는데, 오프라인으로 다른 일자에 시험을 볼 수 있을지 문의 드립니다.",
+    "answer_count": 1,
+    "answers": [
+      {
+        "author": "관리자",
+        "date": "2026. 02. 24. 오후 06:14",
+        "text": "안녕하세요, 개설차수 중 오프라인 응시 원하시는 일정을 별도로 담당자(AX Culture&Growth팀 장재성M)에게 전달해주시면 반영 가능합니다.\n감사합니다.",
+        "is_admin": true
+      }
+    ],
+    "images": [],
+    "image_filenames": ""
+  },
+  {
+    "post_id": "5",
+    "status": "답변 완료",
+    "title": "과제 제출 문의",
+    "question_author": "용감한낙지213",
+    "question_date": "2026. 02. 24. 오후 02:33",
+    "question_text": "안녕하세요, 과제 제출을 하고자 과거 문의에 남겨주셨던 답변대로,\nzip 파일을 업로드 후 unzip 명령어로 파일을 압축 해제하고자 하였습니다.\n다만 다음과 같은 오류가 발생하여, 어떻게 해결할 수 있을지 문의 드립니다.\nunzip source.zip\n-bash: unzip: command not found",
+    "answer_count": 1,
+    "answers": [
+      {
+        "author": "활발한달팽이48",
+        "date": "2026. 02. 24. 오후 02:37",
+        "text": "안녕하세요\nunzip 패키지 설치했습니다. 다시 시도 부탁드립니다.",
+        "is_admin": true
+      }
+    ],
+    "images": [],
+    "image_filenames": ""
+  },
+  {
+    "post_id": "6",
+    "status": "답변 완료",
+    "title": "AI Literacy 인증 문의",
+    "question_author": "용감한구름482",
+    "question_date": "2026. 02. 24. 오전 08:53",
+    "question_text": "안녕하세요.\nAI Literacy 인증 2/25자 품의 완료해 둔 상태입니다.\n예전 문의 글을 보면 응시 전에 추가의 연습횟수를 부여해 주신다고 본 것 같은데,\nAI Literacy 메뉴 상에서는 추가 횟수가 생긴 것 같지는 않습니다.\n추가연습 별도의 방법이 있는 건지, 그리고 내일 10시 인증 응시를 위해 별도로 준비해야 할 사항은 혹시 없는건지 문의 드립니다.\n감사합니다.",
+    "answer_count": 3,
+    "answers": [
+      {
+        "author": "활발한달팽이48",
+        "date": "2026. 02. 24. 오전 09:25",
+        "text": "안녕하세요\n연습횟수 초기화 완료했습니다\n인증 응시 관련 내용은 안내 메일 참고 부탁드립니다.",
+        "is_admin": true
+      },
+      {
+        "author": "용감한구름482",
+        "date": "2026. 02. 24. 오전 09:34",
+        "text": "별도 안내 메일을 받지 못한 것 같습니다.\n기 발송되었다는 의미이시라면 교육담당자님께 제가 별도로 문의 드리겠습니다.\n아니면 금일 중 발송예정이라는 의미이실까요?",
+        "is_admin": false
+      },
+      {
+        "author": "활발한달팽이48",
+        "date": "2026. 02. 24. 오전 09:54",
+        "text": "안녕하세요\n응시 안내 메일 관련해서는 College 담당 매니저님께 문의 부탁드립니다.\n통상적으로 응시 전날 발송되었습니다.",
+        "is_admin": true
+      }
+    ],
+    "images": [],
+    "image_filenames": ""
+  },
+  {
+    "post_id": "7",
+    "status": "답변 완료",
+    "title": "[리터러시 평가 관련 문의] AI 리터러시 평가 대기 관련 문의드립니다.",
+    "question_author": "생각하는나비284",
+    "question_date": "2026. 02. 23. 오후 09:56",
+    "question_text": "안녕하세요,\nAI 리터러시 평가 대기 중 관련해서 문의드립니다.\nAI 리터러시 평가 이후에 평가 대기 중 상태로 지속되는데, 정해진 평가 일정이 있는 걸까요?\n추가로 AI 리터러시 인증평가 제출 이후에 해야하는 절차가 있는 건지 문의드립니다.\n감사합니다.",
+    "answer_count": 1,
+    "answers": [
+      {
+        "author": "활발한달팽이48",
+        "date": "2026. 02. 24. 오전 09:19",
+        "text": "안녕하세요.\n평가 결과는 발표 이후 마이페이지 내에서 결과 확인 가능합니다.\n평가 발표 일정은 HR 담당자에게 문의 부탁드립니다.",
+        "is_admin": true
+      }
+    ],
+    "images": [],
+    "image_filenames": ""
+  },
+  {
+    "post_id": "8",
+    "status": "답변 완료",
+    "title": "AI Bootcamp 재수강 관련 문의",
+    "question_author": "조용한바나나",
+    "question_date": "2026. 02. 23. 오전 10:08",
+    "question_text": "안녕하세요.\nAI Bootcamp 재수강중입니다.\n이전 수강 기록(시청/과제)이 그대로 남아 있는데,\n초기화 없이 그대로 진행해도 되는지 확인 부탁드립니다.\n또한 그대로 진행이 가능하다면,\n과제들만 초기화해주실 수 있는지도 문의드립니다.\n과제 설명 및 제출 요건을 다시 확인하고 싶습니다.\n감사합니다.",
+    "answer_count": 1,
+    "answers": [
+      {
+        "author": "활발한달팽이48",
+        "date": "2026. 02. 24. 오전 09:17",
+        "text": "안녕하세요\n수강기록은 그대로 이어서 진행하시면 되며 현재 초기화는 제공하고 있지 않습니다.",
+        "is_admin": true
+      }
+    ],
+    "images": [],
+    "image_filenames": ""
+  },
+  {
+    "post_id": "9",
+    "status": "답변 완료",
+    "title": "AI Literacy 인증 시험 불가",
+    "question_author": "지니홍",
+    "question_date": "2026. 02. 20. 오후 01:48",
+    "question_text": "안녕하세요.\nAI Literacy 인증 연습하기 시험은 되었는데, 인증시험은 활성화가 되지 않네요.\n방법 안내 부탁드립니다.\n감사합니다.",
+    "answer_count": 2,
+    "answers": [
+      {
+        "author": "지니홍",
+        "date": "2026. 02. 24. 오전 08:58",
+        "text": "AI Literacy 인증을 수강 신청해야 하는군요...별도 진행 했습니다.\n그런데 사전 연습은 2회 완료 후 3회부터 제가 새로 고침하며 인증 시작하기 활성화 여부체크하다가\n한도가 날아갔습니다. 보정 부탁드립니다.",
+        "is_admin": false
+      },
+      {
+        "author": "활발한달팽이48",
+        "date": "2026. 02. 24. 오전 09:22",
+        "text": "안녕하세요.\n실습 관련 적용 완료했습니다.",
+        "is_admin": true
+      }
+    ],
+    "images": [
+      {
+        "filename": "post_9_img_1.png",
+        "original_url": "blob:https://aitalentlab.skax.co.kr/f0c5e37e-4ab3-497a-b093-d966433a09e8",
+        "alt_text": "File 1",
+        "location": "question"
+      }
+    ],
+    "image_filenames": "post_9_img_1.png"
+  },
+  {
+    "post_id": "10",
+    "status": "답변 완료",
+    "title": "2/19 작업으로 인해 Literacy 사전인증시험 진행 불가",
+    "question_author": "조용한코끼리381",
+    "question_date": "2026. 02. 20. 오전 10:39",
+    "question_text": "2/19 작업 공지 메일은 확인하였습니다. 다만, 진행 중이던 사전인증시험은 진행이 불가한 상태가 되었고\n횟수도 그냥 차감되었습니다.\n차감된 1회 - 복구 가능여부 확인 부탁드립니다.",
+    "answer_count": 1,
+    "answers": [
+      {
+        "author": "활발한달팽이48",
+        "date": "2026. 02. 20. 오후 01:42",
+        "text": "안녕하세요.\n복구 완료했습니다.",
+        "is_admin": true
+      }
+    ],
+    "images": [],
+    "image_filenames": ""
+  },
+  {
+    "post_id": "11",
+    "status": "답변 완료",
+    "title": "AI Bootcamp 중복 수강 관련 문의",
+    "question_author": "신중한커피812",
+    "question_date": "2026. 02. 19. 오후 02:14",
+    "question_text": "안녕하세요.\nAI Bootcamp 수강과 관련하여 문의드립니다.\n저는 AI Bootcamp 과정을 개별적으로 신청하여 ~2/13까지 수강 가능하도록 등록되어 있으며,\n신입구성원 AI Bootcamp 과정으로는 ~2/28까지 수강이 가능하다고 안내받았습니다.\n이 중 신입구성원 과정 기준(~2/28)으로 수강을 진행하려고 하였으나,\n현재 시스템에서는 ~2/13까지의 개별 신청 수강 기간이 적용된 것으로 보이며 AI Bootcamp 버튼이 비활성화되어 강의에 접근이 어려운 상태입니다.\n신입구성원 과정 기준으로 정상적으로 수강이 가능하도록 확인해주실 수 있을지 문의드립니다.\n확인 부탁드리겠습니다. 감사합니다.",
+    "answer_count": 1,
+    "answers": [
+      {
+        "author": "활발한달팽이48",
+        "date": "2026. 02. 20. 오후 01:41",
+        "text": "안녕하세요\n현재 접근 가능 적용했습니다. 기간 종료 표시 시 새로고침 해주세요.",
+        "is_admin": true
+      }
+    ],
+    "images": [
+      {
+        "filename": "post_11_img_1.png",
+        "original_url": "blob:https://aitalentlab.skax.co.kr/7bb0874a-21ee-4967-b224-bf87600e0968",
+        "alt_text": "File 1",
+        "location": "question"
+      }
+    ],
+    "image_filenames": "post_11_img_1.png"
+  },
+  {
+    "post_id": "12",
+    "status": "답변 완료",
+    "title": "제출기한",
+    "question_author": "띠룩띠룩",
+    "question_date": "2026. 02. 13. 오후 10:15",
+    "question_text": "강의는 이수하였고 과제 준비 중인데 반드시 2월 13일까지 제출 해야 하나요?",
+    "answer_count": 1,
+    "answers": [
+      {
+        "author": "활발한달팽이48",
+        "date": "2026. 02. 13. 오후 10:19",
+        "text": "안녕하세요.\n2월 13일 23시59분 과제 제출이 마감됩니다.\n재수강 시 수강하신 부분부터 이어서 진행하실 수 있습니다.",
+        "is_admin": true
+      }
+    ],
+    "images": [],
+    "image_filenames": ""
+  },
+  {
+    "post_id": "13",
+    "status": "답변 완료",
+    "title": "Bootcamp 최종과제의 '기획 및 설계' 초기화 발생에 따른 문의 (추가 발생...)",
+    "question_author": "엔지니어링101",
+    "question_date": "2026. 02. 13. 오후 04:11",
+    "question_text": "안녕하세요\nBootcamp 최종과제의 '기획 및 설계' 초기화 발생에 따른 문의 드립니다.\n몇 일전 초기화 되어 보구 요청 드렸는데 오늘 저장 중에 또다시 '과제 소개' 내용으로 저장처리 되었습니다....\n빠른 복구 부탁드립니다.",
+    "answer_count": 2,
+    "answers": [
+      {
+        "author": "엔지니어링101",
+        "date": "2026. 02. 13. 오후 04:19",
+        "text": "이전 문의글을 보니 댓글에 '기획 및 설계' 양식 올려놓은게 있어서 그거 참고해서 다시 등록하겠습니다.",
+        "is_admin": false
+      },
+      {
+        "author": "활발한달팽이48",
+        "date": "2026. 02. 13. 오후 04:21",
+        "text": "안녕하세요.\n초기화 완료했습니다.\n현재 해당 버그가 재현이 되지 않는 관계로 바로 조치가 어렵습니다. 재발 방지를 위해 작성 내용 별도 파일로 저장하여 'AI Product 1팀 조재경'에게 메일 전달 후 태스크 제출 처리 부탁드립니다.\n감사합니다.",
+        "is_admin": true
+      }
+    ],
+    "images": [],
+    "image_filenames": ""
+  },
+  {
+    "post_id": "14",
+    "status": "답변 완료",
+    "title": "리터러시 및 부트캠프 수강 관련",
+    "question_author": "재치있는고양이276",
+    "question_date": "2026. 02. 13. 오후 01:50",
+    "question_text": "안녕하세요.\n현재 리터러시 및 부트캠프 강의를 모두 수강하고, 리터러시 사전 연습 5회 및 부트캠프 최종 프로젝트를 완료한 상황입니다.\n하지만, 리터러시 본 시험 인증하기 버튼이 활성화 되지 않으며, 부트캠프는 아무런 변화가 없는 상황입니다.\n뭔가 문제가 생긴 것인지, 현 상태로 대기하면 이수 처리가 되는 것인지 궁금하여 문의 드립니다.\n감사합니다.",
+    "answer_count": 1,
+    "answers": [
+      {
+        "author": "활발한달팽이48",
+        "date": "2026. 02. 13. 오후 04:23",
+        "text": "안녕하세요.\n리터러시 인증 시험은 AX College에서 신청 후 해당 일정에 맞춰 응시 가능합니다.\n부트캠프 결과 발표는 수강 종료 후 2주 뒤 발표됩니다.",
+        "is_admin": true
+      }
+    ],
+    "images": [],
+    "image_filenames": ""
+  },
+  {
+    "post_id": "15",
+    "status": "답변 완료",
+    "title": "AI bootcamp 최종 과제 제출 후 이수 확인 어떻게 할 수 있는지 궁금합니다.",
+    "question_author": "용감한토키",
+    "question_date": "2026. 02. 12. 오후 01:39",
+    "question_text": "안녕하세요.\n최종과제 제출 후 1주일이 지났는데, 언제쯤 완료된걸 확인할 수 있을까요?\n결과가 메일로 오는지, 혹은 확인할 수 있는 창구가 있는지 궁금합니다.",
+    "answer_count": 1,
+    "answers": [
+      {
+        "author": "활발한달팽이48",
+        "date": "2026. 02. 12. 오후 01:45",
+        "text": "안녕하세요.\n부트캠프 수강기간 종료 후 2주 뒤 결과가 발표됩니다.\n결과 발표 시 안내 메일이 발송되며 AI Talent Lab 페이지 또는 AX College에서 수료 여부를 확인할 수 있습니다.",
+        "is_admin": true
+      }
+    ],
+    "images": [],
+    "image_filenames": ""
+  },
+  {
+    "post_id": "16",
+    "status": "답변 완료",
+    "title": "AI Bootcamp 최종 제출하고 평가만 기다리면 되는게 맞는지 궁금합니다",
+    "question_author": "빠른유니콘728",
+    "question_date": "2026. 02. 12. 오전 09:43",
+    "question_text": "AI Bootcamp 최종 제출하고 평가만 기다리면 되는 상황이 맞는지 확인 해주실 수 있으신가요?",
+    "answer_count": 1,
+    "answers": [
+      {
+        "author": "최윤서",
+        "date": "2026. 02. 12. 오전 10:18",
+        "text": "네 맞습니다. 평가 결과 공개는 별도 안내 드릴 예정이니 참고 부탁드립니다.",
+        "is_admin": true
+      }
+    ],
+    "images": [],
+    "image_filenames": ""
+  },
+  {
+    "post_id": "17",
+    "status": "답변 완료",
+    "title": "과제 제출하기 관련",
+    "question_author": "활발한토끼624",
+    "question_date": "2026. 02. 11. 오후 11:59",
+    "question_text": "3단계 과제제출은 제출하기 버튼을 눌러야만 제출/재제출이 되는거죠?\n소스를 수정,저장하고 일정시간이 지나면 자동제출이 되어버리는지 문의드립니다.",
+    "answer_count": 1,
+    "answers": [
+      {
+        "author": "활발한달팽이48",
+        "date": "2026. 02. 12. 오전 09:29",
+        "text": "안녕하세요.\nIDE 내 소스 저장과 과제 제출은 별개이며 서비스 개발 단계의 제출 버튼을 누르셔야 최종과제 제출/재제출 처리가 됩니다.",
+        "is_admin": true
+      }
+    ],
+    "images": [],
+    "image_filenames": ""
+  },
+  {
+    "post_id": "18",
+    "status": "답변 완료",
+    "title": "Bootcamp 최종과제의 '기획 및 설계' 초기화 발생에 따른 문의",
+    "question_author": "엔지니어링101",
+    "question_date": "2026. 02. 11. 오후 08:28",
+    "question_text": "안녕하세요,\nBootcamp 최종과제의 '기획 및 설계' 초기화 발생에 따른 문의 드립니다.\n기획 및 설계 내역을 입력하고 저장을 했는데 저장 후 다시 들어가 보니 '과제 소개' 내용으로 저장이 되어 있습니다.\n'저장' 버튼 클릭 시 에러가 발생했다는 내용이 나온 후 다시 '저장' 버튼 클릭했을 때 성공 메시지가 나왔는데\n이게 페이지를 열어 놓고 작성에 오래 걸리다 보니 세션이 끊어져서 해당 오류가 발생한 건지 의심 됩니다.\n날라간 내역을 다시 백업 가능할지 모르겟지만\n가능하다면 마지막 작성한 내용으로 복구 요청\n드리며\n어려울 경우 '기획 및 설계' 의 원래 초기 가이드 내용으로 복구 요청\n드립니다.\n감사합니다.",
+    "answer_count": 1,
+    "answers": [
+      {
+        "author": "활발한달팽이48",
+        "date": "2026. 02. 11. 오후 09:07",
+        "text": "안녕하세요.\n초기 가이드 내용으로 초기화했습니다.",
+        "is_admin": true
+      }
+    ],
+    "images": [],
+    "image_filenames": ""
+  },
+  {
+    "post_id": "19",
+    "status": "답변 완료",
+    "title": "새로 오픈한 코드리뷰 사용 문의",
+    "question_author": "용감한돌멩이",
+    "question_date": "2026. 02. 11. 오후 03:16",
+    "question_text": "새로 오픈한 코드리뷰를 사용해 보니, 충족/부분충족 이라고 분류가 되어서 나오는데\n부분충족이 있으면 불합격이 되는건가요?",
+    "answer_count": 1,
+    "answers": [
+      {
+        "author": "곽진성",
+        "date": "2026. 02. 11. 오후 04:07",
+        "text": "안녕하십니까\n코드 리뷰 기능의 \"충족/부분충족/미충족\" 표시는 이수 여부와 직접적으로 연결되지 않습니다.\n코드 리뷰 기능은 \"과제 소개\"에 안내된 핵심 요구사항을 얼마나 구현했는지 진척도를 확인하고, 개선 방향에 대한 피드백을 드리기 위한 것입니다.\n코드 리뷰 기능이 실제 최종 평가 시 보는 핵심 영역들을 진단하여 피드백을 제공하나, 더 세분화된 영역을 모두 보는 평가 로직과는 별개로 동작하고 있습니다.\n따라서 \"부분충족\" 항목이 있다고 해서 미이수를 의미하는 것은 아닙니다.\n감사합니다.",
+        "is_admin": true
+      }
+    ],
+    "images": [],
+    "image_filenames": ""
+  },
+  {
+    "post_id": "20",
+    "status": "답변 완료",
+    "title": "과제제출-기획서 관련",
+    "question_author": "수민수연마수리",
+    "question_date": "2026. 02. 11. 오전 10:19",
+    "question_text": "안녕하세요.\n기획서 제출 단계에서 한번 제출하면 이후 수정이 불가능 한지 문의 드립니다.\n감사합니다.",
+    "answer_count": 1,
+    "answers": [
+      {
+        "author": "활발한달팽이48",
+        "date": "2026. 02. 11. 오전 10:26",
+        "text": "안녕하세요.\n수정하여 재제출 가능하며 `서비스 개발` 제출 시 평가가 이루어집니다.\n`서비스 개발` 제출 이후에도 다시 제출 버튼을 누르면 과제 제출 시간이 업데이트 되며, 평가는 일정 주기로 돌며 제출 시간이 업데이트 되어 있다면 재평가가 이루어집니다.",
+        "is_admin": true
+      }
+    ],
+    "images": [],
+    "image_filenames": ""
+  }
+]
