@@ -65,63 +65,8 @@ def init_driver():
         return webdriver.Chrome(options=options)
 
 
-COOKIE_FILE = os.path.join(OUTPUT_DIR, "cookies.json")
-
-
-def save_cookies(driver):
-    """쿠키를 파일로 저장"""
-    cookies = driver.get_cookies()
-    with open(COOKIE_FILE, "w", encoding="utf-8") as f:
-        json.dump(cookies, f)
-    print(f"  🍪 쿠키 저장됨: {COOKIE_FILE}")
-
-
-def load_cookies(driver) -> bool:
-    """저장된 쿠키 로드 → 로그인 상태 복원"""
-    if not os.path.exists(COOKIE_FILE):
-        return False
-
-    try:
-        with open(COOKIE_FILE, "r", encoding="utf-8") as f:
-            cookies = json.load(f)
-
-        # 쿠키 설정을 위해 먼저 해당 도메인에 접속
-        driver.get(BASE_URL)
-        time.sleep(1)
-
-        for cookie in cookies:
-            # 일부 속성이 호환 안 될 수 있으므로 제거
-            for key in ["sameSite", "httpOnly", "expiry"]:
-                cookie.pop(key, None)
-            try:
-                driver.add_cookie(cookie)
-            except Exception:
-                pass
-
-        # 쿠키 적용 후 페이지 새로고침
-        driver.get(INQUIRY_URL)
-        time.sleep(2)
-
-        # 로그인 상태 확인 (로그인 페이지로 리다이렉트되지 않으면 성공)
-        if "login" not in driver.current_url.lower():
-            print("✅ 저장된 쿠키로 자동 로그인 성공!")
-            return True
-        else:
-            print("⚠️  쿠키 만료됨, 재로그인 필요")
-            return False
-
-    except Exception as e:
-        print(f"⚠️  쿠키 로드 실패: {e}")
-        return False
-
-
 def login(driver):
-    """로그인 (쿠키 → 자동 → 수동 순서로 시도)"""
-    # 1단계: 저장된 쿠키로 로그인 시도
-    if load_cookies(driver):
-        return
-
-    # 2단계: 아이디/비밀번호 자동 로그인
+    """로그인 (자동 → 수동 순서로 시도)"""
     driver.get(BASE_URL)
     time.sleep(2)
 
@@ -134,17 +79,15 @@ def login(driver):
 
             if "login" not in driver.current_url.lower():
                 print("✅ 자동 로그인 완료")
-                save_cookies(driver)  # 성공 시 쿠키 저장
                 driver.get(INQUIRY_URL)
                 time.sleep(2)
                 return
         except Exception:
             pass
 
-    # 3단계: 수동 로그인
+    # 수동 로그인
     print("⚠️  브라우저에서 직접 로그인해주세요.")
     input("   로그인 완료 후 Enter >> ")
-    save_cookies(driver)  # 수동 로그인 후에도 쿠키 저장
     driver.get(INQUIRY_URL)
     time.sleep(2)
 
