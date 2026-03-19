@@ -1,20 +1,19 @@
 """
-SK AX AI Talent Lab 문의게시판 스크래퍼 - 3월 이후 데이터만 수집
+SK AX AI Talent Lab 문의게시판 스크래퍼 - 증분 수집
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-- 최신 게시글부터 순서대로 수집
-- 2026-03-01 미만(2월 이전) 게시글 만나면 즉시 중단
-- 출력 포맷: inquiry_all.json / inquiry_comment_all.json 동일 형식
+- 기존 inquiry_all.json / inquiry_comment_all.json 읽어서
+  이미 수집된 최신 날짜 이후 게시글만 추가 수집
+- 공지(pinned) 게시글, 이미지 포함 게시글 스킵
 
 출력:
-  inquiry_new.json          ← inquiry_all.json 형식
-  inquiry_comment_new.json  ← inquiry_comment_all.json 형식
+  inquiry_all.json          ← 기존 + 신규 (날짜 오름차순)
+  inquiry_comment_all.json  ← 기존 + 신규 (날짜 오름차순)
 """
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
-from bs4 import BeautifulSoup
 import json
 import time
 import os
@@ -27,9 +26,12 @@ load_dotenv(override=True)
 # ━━━━━━━━━━ 설정 ━━━━━━━━━━
 BASE_URL = "https://aitalentlab.skax.co.kr"
 INQUIRY_URL = f"{BASE_URL}/inquiry"
-CUTOFF_DATE = datetime(2026, 3, 1)   # 이 날짜 미만이면 수집 중단
-MAX_PAGES = 50                         # 안전 상한 (실제로는 날짜 필터로 먼저 중단됨)
+FALLBACK_CUTOFF = datetime(2026, 3, 1)  # 기존 파일 없을 때 기본 컷오프
+MAX_PAGES = 50
 DELAY = 2
+
+INQ_PATH = os.path.join("c:\\atl_scrapper", "inquiry_new.json")
+CMT_PATH = os.path.join("c:\\atl_scrapper", "inquiry_comment_new.json")
 
 USERNAME = os.environ.get("USERNAME")
 PASSWORD = os.environ.get("PASSWORD")
@@ -115,12 +117,16 @@ def parse_date(date_str: str) -> datetime | None:
     return None
 
 
-def is_before_cutoff(date_str: str) -> bool:
-    """CUTOFF_DATE 이전이면 True (수집 중단 대상)"""
-    dt = parse_date(date_str)
+def is_already_collected(date_str: str, latest_dt: datetime) -> bool:
+    """latest_dt 이하(이미 수집된 범위)면 True → 중단"""
+    cleaned = re.sub(r'T', ' ', date_str)
+    cleaned = re.sub(r'\.\d+', '', cleaned)
+    cleaned = re.sub(r'[Zz]$', '', cleaned)
+    cleaned = re.sub(r'[+-]\d{2}:\d{2}$', '', cleaned).strip()
+    dt = parse_date(cleaned)
     if dt is None:
         return False
-    return dt < CUTOFF_DATE
+    return dt <= latest_dt
 
 
 # ━━━━━━━━━━ 모달 제어 ━━━━━━━━━━
@@ -191,10 +197,13 @@ def flush_network_logs(driver):
         pass
 
 
-def get_timestamps_from_network(driver) -> dict:
+def get_api_data(driver) -> dict:
     """
-    모달 클릭 후 발생한 네트워크 요청에서 정확한 시간 정보 추출.
-    반환: {"create_dt": "2026-03-11 14:32:10", "update_dt": "...", "comments": [...]}
+    모달 클릭 후 발생한 네트워크 요청에서 문의 전체 데이터 추출.
+    반환: {
+        "create_dt", "update_dt",
+        "comments": [{create_dt, update_dt, content, author_name, is_admin}, ...]
+    }
     찾지 못하면 빈 dict 반환.
     """
     result = {}
@@ -206,7 +215,6 @@ def get_timestamps_from_network(driver) -> dict:
                 if msg.get("method") != "Network.responseReceived":
                     continue
                 url = msg["params"]["response"]["url"]
-                # 문의 상세 API 엔드포인트 패턴
                 if not any(k in url for k in ["/inquiry", "/inquiries", "/board", "/post", "/question"]):
                     continue
                 content_type = msg["params"]["response"].get("mimeType", "")
@@ -218,13 +226,11 @@ def get_timestamps_from_network(driver) -> dict:
                     if not body or not body.get("body"):
                         continue
                     data = json.loads(body["body"])
-                    # 단일 객체 또는 {data: {...}} 형태 처리
                     if isinstance(data, dict):
                         item = data.get("data") or data.get("result") or data.get("inquiry") or data
                         if isinstance(item, dict) and "create_dt" in item:
                             result["create_dt"] = item.get("create_dt", "")
                             result["update_dt"] = item.get("update_dt", "")
-                            # 댓글 timestamps
                             comments_raw = (
                                 item.get("comments") or item.get("answers") or
                                 data.get("comments") or []
@@ -233,6 +239,21 @@ def get_timestamps_from_network(driver) -> dict:
                                 {
                                     "create_dt": c.get("create_dt", ""),
                                     "update_dt": c.get("update_dt", ""),
+                                    # 댓글 본문: 여러 키 이름 시도
+                                    "content": (
+                                        c.get("content") or c.get("body") or
+                                        c.get("text") or c.get("message") or ""
+                                    ),
+                                    # 작성자: 여러 키 이름 시도
+                                    "author_name": (
+                                        c.get("author_name") or c.get("username") or
+                                        c.get("writer") or c.get("name") or
+                                        c.get("user", {}).get("name", "") or ""
+                                    ),
+                                    "is_admin": int(bool(
+                                        c.get("is_admin") or c.get("isAdmin") or
+                                        c.get("role") == "admin"
+                                    )),
                                 }
                                 for c in comments_raw if isinstance(c, dict)
                             ]
@@ -268,10 +289,24 @@ def extract_modal_detail(driver) -> dict:
 
     time.sleep(1.5)
 
-    try:
-        modal = driver.find_element(By.CSS_SELECTOR, "[class*='modalContent_hdlr3']")
-    except NoSuchElementException:
-        print("      ⚠️ 모달을 찾을 수 없음")
+    # 여러 선택자 순서대로 시도
+    modal = None
+    for sel in [
+        "[class*='modalContent_hdlr3']",
+        "[class*='modalInner_hdlr3']",
+        "[class*='modalBody_hdlr3']",
+        "[class*='Modal'] [class*='content']",
+        "[class*='modal'] [class*='content']",
+        "[role='dialog']",
+    ]:
+        try:
+            modal = driver.find_element(By.CSS_SELECTOR, sel)
+            break
+        except NoSuchElementException:
+            continue
+
+    if modal is None:
+        print("      ⚠️ 모달을 찾을 수 없음 (선택자 미매칭)")
         return result
 
     # 제목
@@ -431,21 +466,69 @@ def navigate_to_page(driver, page: int, current_page: int) -> bool:
     return False
 
 
-def scrape_march_onwards(driver):
+ALL_INQ_PATH = os.path.join("c:\\atl_scrapper", "inquiry_all.json")
+ALL_CMT_PATH = os.path.join("c:\\atl_scrapper", "inquiry_comment_all.json")
+
+
+def load_existing_data():
+    """
+    컷오프·ID 시작값: inquiry_all.json 기준 (이미 머지된 전체 데이터)
+    저장 대상: inquiry_new.json (scrape_update 결과물, 나중에 merge_json으로 합침)
+    """
+    existing_inq, existing_cmt = [], []
+    start_inq_id = 1
+    start_cmt_id = 1
+    latest_dt = FALLBACK_CUTOFF
+
+    # 컷오프 및 ID 기준: _all.json
+    if os.path.exists(ALL_INQ_PATH):
+        with open(ALL_INQ_PATH, encoding="utf-8") as f:
+            all_inq = json.load(f)
+        if all_inq:
+            start_inq_id = max(d["id"] for d in all_inq) + 1
+            latest_str = max(d["create_dt"] for d in all_inq)
+            cleaned = re.sub(r'T', ' ', latest_str)
+            cleaned = re.sub(r'\.\d+|[Zz]$', '', cleaned)
+            cleaned = re.sub(r'[+-]\d{2}:\d{2}$', '', cleaned).strip()
+            dt = parse_date(cleaned)
+            if dt:
+                latest_dt = dt
+
+    if os.path.exists(ALL_CMT_PATH):
+        with open(ALL_CMT_PATH, encoding="utf-8") as f:
+            all_cmt = json.load(f)
+        if all_cmt:
+            start_cmt_id = max(d["id"] for d in all_cmt) + 1
+
+    # 이미 이번 회차에 수집된 _new.json이 있으면 이어서
+    if os.path.exists(INQ_PATH):
+        with open(INQ_PATH, encoding="utf-8") as f:
+            existing_inq = json.load(f)
+        if existing_inq:
+            start_inq_id = max(d["id"] for d in existing_inq) + 1
+
+    if os.path.exists(CMT_PATH):
+        with open(CMT_PATH, encoding="utf-8") as f:
+            existing_cmt = json.load(f)
+        if existing_cmt:
+            start_cmt_id = max(d["id"] for d in existing_cmt) + 1
+
+    return existing_inq, existing_cmt, start_inq_id, start_cmt_id, latest_dt
+
+
+def scrape_march_onwards(driver, start_inq_id: int, start_cmt_id: int, latest_dt: datetime):
     """
     inquiry_all.json 형식의 inquiries 리스트와
     inquiry_comment_all.json 형식의 comments 리스트를 반환
     - 1페이지(최신)부터 순서대로 탐색
-    - 공지(pinned) 게시글은 스킵
-    - 2026-03-01 미만 게시글 만나면 중단
+    - 공지(pinned) 게시글, 이미지 포함 게시글 스킵
+    - latest_dt 이하 게시글 만나면 중단 (이미 수집된 것)
     """
     inquiries = []
     comments = []
 
-    # ID 카운터 (기존 최대 ID 이후부터 시작)
-    # inquiry_all.json의 마지막 id = 102, inquiry_comment_all.json의 마지막 id = 123
-    inq_id = 103
-    cmt_id = 124
+    inq_id = start_inq_id
+    cmt_id = start_cmt_id
 
     # 1페이지 로드 후 총 페이지 수 파악
     driver.get(INQUIRY_URL)
@@ -517,9 +600,9 @@ def scrape_march_onwards(driver):
                     print(f"\n    [{row_idx+1}] ⏭️  공지 스킵: '{title_text[:40]}'")
                     continue
 
-                # ── 날짜 필터: 3월 미만이면 중단 ──
-                if date_text and is_before_cutoff(date_text):
-                    print(f"\n  🛑 날짜 '{date_text}' → 2026-03 미만. 수집 중단.")
+                # ── 날짜 필터: 이미 수집된 범위면 중단 (테이블 날짜로 사전 체크) ──
+                if date_text and is_already_collected(date_text, latest_dt):
+                    print(f"\n  🛑 날짜 '{date_text}' → 이미 수집된 범위. 중단.")
                     stop_scraping = True
                     break
 
@@ -543,8 +626,8 @@ def scrape_march_onwards(driver):
                     time.sleep(DELAY)
                     continue
 
-                # 네트워크 API 응답에서 정확한 타임스탬프 추출
-                api_ts = get_timestamps_from_network(driver)
+                # 네트워크 API 응답에서 문의 전체 데이터 추출
+                api_ts = get_api_data(driver)
 
                 # 모달 내용 추출
                 detail = extract_modal_detail(driver)
@@ -559,9 +642,9 @@ def scrape_march_onwards(driver):
                     create_dt = normalize_date(ui_date)
                     update_dt = create_dt
 
-                # 날짜 필터 (API 또는 UI 날짜로 재확인)
-                if is_before_cutoff(create_dt):
-                    print(f"  🛑 날짜 '{create_dt}' → 2026-03 미만. 수집 중단.")
+                # 날짜 필터 (API 날짜로 재확인)
+                if is_already_collected(create_dt, latest_dt):
+                    print(f"  🛑 날짜 '{create_dt}' → 이미 수집된 범위. 중단.")
                     close_modal(driver)
                     stop_scraping = True
                     break
@@ -585,31 +668,57 @@ def scrape_march_onwards(driver):
                 print(f"      ✅ 문의 #{inq_id} 저장 | {create_dt}")
 
                 # ── inquiry_comment_all.json 형식으로 댓글 저장 ──
+                # API 댓글 우선, 없으면 모달 파싱 결과 사용
                 api_comments = api_ts.get("comments", [])
-                for i, c in enumerate(detail["comments"]):
-                    # API 댓글 타임스탬프가 있으면 우선 사용
-                    if i < len(api_comments) and api_comments[i].get("create_dt"):
-                        c_create = api_comments[i]["create_dt"]
-                        c_update = api_comments[i].get("update_dt") or c_create
-                    else:
-                        c_create = normalize_date(c["date_str"]) if c["date_str"] else create_dt
-                        c_update = c_create
+                modal_comments = detail["comments"]
 
-                    comment = {
-                        "id": cmt_id,
-                        "inquiry_id": inq_id,
-                        "content": c["content_html"],
-                        "author_id": None,
-                        "author_name": c["author_name"],
-                        "file_ids": None,
-                        "is_admin": 1 if c["is_admin"] else 0,
-                        "create_dt": c_create,
-                        "update_dt": c_update,
-                    }
-                    comments.append(comment)
-                    cmt_id += 1
+                # API 댓글에 content가 있으면 API 댓글 사용
+                api_has_content = any(c.get("content") for c in api_comments)
 
-                print(f"      댓글: {len(detail['comments'])}개")
+                if api_has_content:
+                    # API 응답 기반으로 댓글 저장
+                    for ac in api_comments:
+                        if not ac.get("content"):
+                            continue
+                        c_create = normalize_date(ac["create_dt"]) if ac.get("create_dt") else create_dt
+                        c_update = normalize_date(ac["update_dt"]) if ac.get("update_dt") else c_create
+                        comment = {
+                            "id": cmt_id,
+                            "inquiry_id": inq_id,
+                            "content": ac["content"],
+                            "author_id": None,
+                            "author_name": ac.get("author_name", ""),
+                            "file_ids": None,
+                            "is_admin": ac.get("is_admin", 0),
+                            "create_dt": c_create,
+                            "update_dt": c_update,
+                        }
+                        comments.append(comment)
+                        cmt_id += 1
+                    print(f"      댓글: {len(api_comments)}개 (API)")
+                else:
+                    # 모달 파싱 결과 기반으로 댓글 저장
+                    for i, c in enumerate(modal_comments):
+                        if i < len(api_comments) and api_comments[i].get("create_dt"):
+                            c_create = normalize_date(api_comments[i]["create_dt"])
+                            c_update = normalize_date(api_comments[i].get("update_dt") or api_comments[i]["create_dt"])
+                        else:
+                            c_create = normalize_date(c["date_str"]) if c["date_str"] else create_dt
+                            c_update = c_create
+                        comment = {
+                            "id": cmt_id,
+                            "inquiry_id": inq_id,
+                            "content": c["content_html"],
+                            "author_id": None,
+                            "author_name": c["author_name"],
+                            "file_ids": None,
+                            "is_admin": 1 if c["is_admin"] else 0,
+                            "create_dt": c_create,
+                            "update_dt": c_update,
+                        }
+                        comments.append(comment)
+                        cmt_id += 1
+                    print(f"      댓글: {len(modal_comments)}개 (모달)")
 
                 inq_id += 1
 
@@ -628,38 +737,48 @@ def scrape_march_onwards(driver):
 
 # ━━━━━━━━━━ 저장 ━━━━━━━━━━
 
-def save_results(inquiries: list, comments: list):
-    out_dir = "c:\\atl_scrapper"
+def save_results(new_inquiries: list, new_comments: list,
+                 existing_inq: list, existing_cmt: list):
+    """신규 데이터를 합쳐서 날짜 오름차순으로 저장"""
+    combined_inq = existing_inq + new_inquiries
+    combined_inq.sort(key=lambda d: d.get("create_dt") or "")
 
-    inq_path = os.path.join(out_dir, "inquiry_new.json")
-    with open(inq_path, "w", encoding="utf-8") as f:
-        json.dump(inquiries, f, ensure_ascii=False, indent=2)
-    print(f"  📦 {inq_path} ({len(inquiries)}건)")
+    combined_cmt = existing_cmt + new_comments
+    combined_cmt.sort(key=lambda c: c.get("create_dt") or "")
 
-    cmt_path = os.path.join(out_dir, "inquiry_comment_new.json")
-    with open(cmt_path, "w", encoding="utf-8") as f:
-        json.dump(comments, f, ensure_ascii=False, indent=2)
-    print(f"  📦 {cmt_path} ({len(comments)}건)")
+    with open(INQ_PATH, "w", encoding="utf-8") as f:
+        json.dump(combined_inq, f, ensure_ascii=False, indent=2)
+    print(f"  📦 {INQ_PATH}  신규 {len(new_inquiries)}건 추가 → 총 {len(combined_inq)}건")
+
+    with open(CMT_PATH, "w", encoding="utf-8") as f:
+        json.dump(combined_cmt, f, ensure_ascii=False, indent=2)
+    print(f"  📦 {CMT_PATH}  신규 {len(new_comments)}건 추가 → 총 {len(combined_cmt)}건")
 
 
 # ━━━━━━━━━━ 메인 ━━━━━━━━━━
 
 def main():
+    existing_inq, existing_cmt, start_inq_id, start_cmt_id, latest_dt = load_existing_data()
+    print(f"📅 수집 기준: '{latest_dt.strftime('%Y-%m-%d %H:%M:%S')}' 이후 게시글만")
+    print(f"🔢 ID 시작: 문의 #{start_inq_id} / 댓글 #{start_cmt_id}")
+    print(f"💡 수집 후 merge_json.py를 실행해서 inquiry_all.json에 반영하세요.\n")
+
     driver = init_driver()
     try:
         login(driver)
-        print(f"\n✅ {INQUIRY_URL} 접속 완료")
-        print(f"📅 수집 기준: {CUTOFF_DATE.strftime('%Y-%m-%d')} 이후 게시글만\n")
+        print(f"\n✅ {INQUIRY_URL} 접속 완료\n")
 
-        inquiries, comments = scrape_march_onwards(driver)
+        new_inq, new_cmt = scrape_march_onwards(
+            driver, start_inq_id, start_cmt_id, latest_dt
+        )
 
-        if inquiries:
+        if new_inq:
             print(f"\n{'='*50}")
             print(f"💾 저장 중...")
-            save_results(inquiries, comments)
-            print(f"\n🎉 완료! 문의: {len(inquiries)}건 / 댓글: {len(comments)}건")
+            save_results(new_inq, new_cmt, existing_inq, existing_cmt)
+            print(f"\n🎉 완료! 신규 문의: {len(new_inq)}건 / 댓글: {len(new_cmt)}건")
         else:
-            print("\n⚠️ 수집된 데이터가 없습니다.")
+            print("\n⚠️ 새로 수집된 데이터가 없습니다. (이미 최신 상태)")
 
     except Exception as e:
         print(f"\n❌ 에러: {e}")
