@@ -229,8 +229,18 @@ def get_api_data(driver) -> dict:
                     if isinstance(data, dict):
                         item = data.get("data") or data.get("result") or data.get("inquiry") or data
                         if isinstance(item, dict) and "create_dt" in item:
+                            # DEBUG: API 응답 키 목록 출력 (author_id 필드명 확인용)
+                            print(f"      [DEBUG] API keys: {list(item.keys())}")
+                            _dbg_cmts = item.get("comments") or item.get("answers") or []
+                            if _dbg_cmts:
+                                print(f"      [DEBUG] comment[0] keys: {list(_dbg_cmts[0].keys())}")
                             result["create_dt"] = item.get("create_dt", "")
                             result["update_dt"] = item.get("update_dt", "")
+                            # 본문 content 추출
+                            result["content"] = (
+                                item.get("content") or item.get("body") or
+                                item.get("text") or item.get("description") or ""
+                            )
                             comments_raw = (
                                 item.get("comments") or item.get("answers") or
                                 data.get("comments") or []
@@ -329,12 +339,22 @@ def extract_modal_detail(driver) -> dict:
     except NoSuchElementException:
         pass
 
-    # 질문 본문 HTML
-    try:
-        content_el = modal.find_element(By.CSS_SELECTOR, "[class*='content_hdlr3_609']")
-        result["content_html"] = content_el.get_attribute("innerHTML")
-    except NoSuchElementException:
-        pass
+    # 질문 본문 HTML (여러 선택자 시도)
+    for content_sel in [
+        "[class*='content_hdlr3']",
+        "[class*='bodyContent']",
+        "[class*='postContent']",
+        "[class*='questionContent']",
+        "[class*='description']",
+    ]:
+        try:
+            content_el = modal.find_element(By.CSS_SELECTOR, content_sel)
+            html = content_el.get_attribute("innerHTML")
+            if html and html.strip():
+                result["content_html"] = html
+                break
+        except NoSuchElementException:
+            continue
 
     # 댓글 목록
     try:
@@ -650,10 +670,12 @@ def scrape_march_onwards(driver, start_inq_id: int, start_cmt_id: int, latest_dt
                     break
 
                 # ── inquiry_all.json 형식으로 저장 ──
+                # 본문: API 응답 우선, 없으면 모달 HTML
+                content_text = api_ts.get("content") or detail["content_html"]
                 inquiry = {
                     "id": inq_id,
                     "title": detail["title"] or title_text,
-                    "content": detail["content_html"],
+                    "content": content_text,
                     "author_id": None,
                     "author_name": detail["author_name"] or author_text,
                     "file_ids": "[]",
